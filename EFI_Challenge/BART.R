@@ -1,5 +1,9 @@
 setwd("C:\Users\keyke\OneDrive - Indiana University\Forecast challenge data\BART\CLEANED")
 
+install.packages("caret")
+?caret
+
+
 #import data 
 Inc_Rn_Bart <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.incoming_rad.30m.csv")
 LAI_Bart_DOY <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.LAI.DOY.csv")
@@ -33,23 +37,48 @@ View(df7)
 
 MultVariables_Bart <- df7
 
-write.table(MultVariables_Bart, file = "C:/Users/Karmic Dreamwork.000/Desktop",row.names=FALSE)
-
-write.table(MultVariables_Bart,file = "C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/",row.names=FALSE)
-
+write.table(MultVariables_Bart,file="MultVariables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
 
 df8 <- LAI_Bart_DOY
+names(df8)[names(df8) == "mean"] <- "LAI_mean"
+head(df8)
+
 df9 <- NDVI_Bart_DOY
+names(df9)[names(df9) == "mean"] <- "NDVI_mean"
+head(df9)
 
-df10 <- merge(df6, df7, by=c("DOY"), all.x=TRUE)
-head(df10)
+df10 <- merge(df8, df9, by=c("DOY"), all.x=TRUE)
+head(LAI_NDVI_Bart)
+
+LAI_NDVI_Bart <- df10
+write.table(LAI_NDVI_Bart,file="LAI_NDVI_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
 
 
 
-head(df3)
-View(df3)
-###
+#Run Model
+#Variables here: MultVariables_Bart
+#average DOY things herE: LAI_NDVI_Bart 
 
+head(MultVariables_Bart) #Incoming radiation, precipitation, temperature, humidity, wind speed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#random forest model code (from the morgan monroe forest test)
 
 head(Temp_Hum_Bart)
 #random forest model (y is the thing you want to predict)
