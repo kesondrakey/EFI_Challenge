@@ -30,6 +30,7 @@ df6 <- merge(df3, df4, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
 
 df7 <- merge(df5, df6, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
 View(df7)
+
 MultVariables_Bart <- df7
 
 write.csv(MultVariables_Bart,file = "C:/Users/Karmic Dreamwork.000/Desktop",row.names=FALSE)
