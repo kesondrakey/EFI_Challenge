@@ -104,6 +104,23 @@ head(LAI_NDVI_Bart) #LAI and NDVI Averages
 library("caret")
 
 #create time slices
+Bart_Timeslice <- createTimeSlices(1:nrow(Bart_multiple_Wenzhe), initialWindow = 2880, horizon = 576, fixedWindow = TRUE, skip = 0)
+View(Bart_Timeslice)
+
+
+datapart <- createDataPartition(Bart_multiple_Wenzhe$Hour,Bart_multiple_Wenzhe$DOY, times = 2, p = 0.8, list = TRUE)
+View(datapart)
+
+#workflow
+#data cleaning
+#figure out how to fix up the data via r code
+#current data looks too small to include all of the obs? 
+
+#groups for data training
+#1. add a new column
+#2. assign 1 through 19 ; 54950 observations (from wenzhe's excel data)
+#3. within that column, group A is 1:2880, group be 2881:.... , etc.
+#4. randomly assign 4 of those groups to testing (this will be 20%)
 
 
 
@@ -111,15 +128,19 @@ library("caret")
 
 
 
+#111504/2880 = ~38 chunks of two month time increments 
+#categories 1-5
+#randomly (random # gen) assign 80% of 1-38 into training and 20% into testing
+
+
+#https://www.machinelearningplus.com/machine-learning/caret-package/#3datapreparationandpreprocessing
+install.packages(c('caret', 'skimr', 'RANN', 'randomForest', 'fastAdaboost', 'gbm', 'xgboost', 'caretEnsemble', 'C50', 'earth'))
 
 
 
 
 
-
-
-
-#random forest model code (from the morgan monroe forest test)
+#random forest model code (from the Morgan Monroe forest test)
 
 head(Temp_Hum_Bart)
 #random forest model (y is the thing you want to predict)
