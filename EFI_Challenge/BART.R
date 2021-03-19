@@ -64,12 +64,35 @@ head(LAI_NDVI_Bart)
 
 LAI_NDVI_Bart <- df10
 write.table(LAI_NDVI_Bart,file="LAI_NDVI_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
+Variables_Bart <- read.csv("~/GitHub/EFI_Challenge/EFI_Challenge/Variables_Bart.csv", sep="")
 
-#turn data that doesnt pass quality control into NAs
-data[data == -9999] <- NA
+#turn data that doesnt pass quality control into NAs; remove data when QF = 1 
+head(Variables_Bart)
+
+Variables_Bart1 <- Variables_Bart
+View(Variables_Bart1)
+####
 
 
 
+
+#MultiVariable[MultiVariable$QC==1,yyy] <- NA
+Variables_Bart1[Variables_Bart1$RHFinalQF==1, Variables_Bart1$RHMean] <- NA
+
+Variables_Bart1[Variables_Bart1$inSWFinalQF==1, Variables_Bart1$inSWmean] <- NA
+Variables_Bart1[Variables_Bart1$inLWFinalQF==1, Variables_Bart1$inLWFinalQF] <- NA
+Variables_Bart1[Variables_Bart1$secPrecipRangeQF==1, Variables_Bart1$secPrecipRangeQF] <- NA
+Variables_Bart1[Variables_Bart1$RHFinalQF==1,] <- NA
+Variables_Bart1[Variables_Bart1$tempRHFinalQF==1,] <- NA
+Variables_Bart1[Variables_Bart1$windDirFinalQF==1,] <- NA
+
+
+View(Variables_Bart1)
+
+#create new dataframe
+
+head(Variables_Bart)
+CleanedVariables_Bart <- data.frame(StartTime = Variables_Bart$startDateTime.x, EndTime = Variables_Bart$endDateTime.x, Year = Variables_Bart$Year, DOY = Variables_Bart$DOY, Hour = Variables_Bart$Hour, inSWMean = Variables_Bart$inSWMean, inLWMean = Variables_Bart$inLWMean, secPrecipBulk = Variables_Bart$secPrecipBulk, RHMean = Variables_Bart$RHMean, tempRHMean = Variables_Bart$tempRHMean, windSpeedMean = Variables_Bart$windSpeedMean)
 
 #Run Model
 #Variables here: MultVariables_Bart
