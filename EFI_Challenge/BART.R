@@ -36,8 +36,10 @@ df7 <- merge(df5, df6, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
 View(df7)
 
 MultVariables_Bart <- df7
+write.table(MultVariables_Bart,file="MultVariables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,row.names = FALSE,na="NA")
 
-write.table(MultVariables_Bart,file="MultVariables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
+
+
 
 df8 <- LAI_Bart_DOY
 names(df8)[names(df8) == "mean"] <- "LAI_mean"
@@ -53,14 +55,12 @@ head(LAI_NDVI_Bart)
 LAI_NDVI_Bart <- df10
 write.table(LAI_NDVI_Bart,file="LAI_NDVI_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
 
-
-
 #Run Model
 #Variables here: MultVariables_Bart
-#average DOY things herE: LAI_NDVI_Bart 
+#average DOY things herE: LAI_NDVI_Bart
 
-head(MultVariables_Bart) #Incoming radiation, precipitation, temperature, humidity, wind speed
-
+View(MultVariables_Bart) #Incoming radiation, precipitation, temperature, humidity, wind speed
+head(LAI_NDVI_Bart) #LAI and NDVI Averages
 
 
 
