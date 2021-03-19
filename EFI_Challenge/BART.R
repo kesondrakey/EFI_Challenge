@@ -77,27 +77,33 @@ library(dplyr)
 ### these dont work****
 #?mutate_cond
 #Variables_Bart1[which(Variables_Bart1$RHFinalQF=="1"), Variables_Bart1$RHMean] <- NA
-Variables_Bart1[Variables_Bart1$inSWFinalQF==1, Variables_Bart1$inSWmean] <- NA
-Variables_Bart1[Variables_Bart1$inLWFinalQF==1, Variables_Bart1$inLWFinalQF] <- NA
-Variables_Bart1[Variables_Bart1$secPrecipRangeQF==1, Variables_Bart1$secPrecipRangeQF] <- NA
-Variables_Bart1[Variables_Bart1$RHFinalQF==1,] <- NA
-Variables_Bart1[Variables_Bart1$tempRHFinalQF==1,] <- NA
-Variables_Bart1[Variables_Bart1$windDirFinalQF==1,] <- NA
+#Variables_Bart1[Variables_Bart1$inSWFinalQF==1, Variables_Bart1$inSWmean] <- NA
+#Variables_Bart1[Variables_Bart1$inLWFinalQF==1, Variables_Bart1$inLWFinalQF] <- NA
+#Variables_Bart1[Variables_Bart1$secPrecipRangeQF==1, Variables_Bart1$secPrecipRangeQF] <- NA
+#Variables_Bart1[Variables_Bart1$RHFinalQF==1,] <- NA
+#Variables_Bart1[Variables_Bart1$tempRHFinalQF==1,] <- NA
+#Variables_Bart1[Variables_Bart1$windDirFinalQF==1,] <- NA
 
-
-View(Variables_Bart1)
+#View(Variables_Bart1)
 
 #create new dataframe
+#head(Variables_Bart)
+#CleanedVariables_Bart <- data.frame(StartTime = Variables_Bart$startDateTime.x, EndTime = Variables_Bart$endDateTime.x, Year = Variables_Bart$Year, DOY = Variables_Bart$DOY, Hour = Variables_Bart$Hour, inSWMean = Variables_Bart$inSWMean, inLWMean = Variables_Bart$inLWMean, secPrecipBulk = Variables_Bart$secPrecipBulk, RHMean = Variables_Bart$RHMean, tempRHMean = Variables_Bart$tempRHMean, windSpeedMean = Variables_Bart$windSpeedMean)
 
-head(Variables_Bart)
-CleanedVariables_Bart <- data.frame(StartTime = Variables_Bart$startDateTime.x, EndTime = Variables_Bart$endDateTime.x, Year = Variables_Bart$Year, DOY = Variables_Bart$DOY, Hour = Variables_Bart$Hour, inSWMean = Variables_Bart$inSWMean, inLWMean = Variables_Bart$inLWMean, secPrecipBulk = Variables_Bart$secPrecipBulk, RHMean = Variables_Bart$RHMean, tempRHMean = Variables_Bart$tempRHMean, windSpeedMean = Variables_Bart$windSpeedMean)
+
+#excel cleaned variables (where quality control failed)
+Bart_multiple_Wenzhe <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/Combined_Variables/Bart_multiple_Wenzhe.csv")
 
 #Run Model
 #Variables here: MultVariables_Bart
 #average DOY things herE: LAI_NDVI_Bart
-
-View(MultVariables_Bart) #Incoming radiation, precipitation, temperature, humidity, wind speed
+head(Bart_multiple_Wenzhe) #Incoming radiation, precipitation, temperature, humidity, wind speed
 head(LAI_NDVI_Bart) #LAI and NDVI Averages
+
+#install.packages("caret")
+library("caret")
+
+#create time slices
 
 
 
