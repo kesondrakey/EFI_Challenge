@@ -28,17 +28,27 @@ df1 <- Inc_Rn_Bart
 df2 <- Precip_Bart
 df3 <- Temp_Hum_Bart
 df4 <- WS_Bart
+View(df5)
 
-df5 <- merge(df1, df2, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
-df6 <- merge(df3, df4, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
 
-df7 <- merge(df5, df6, by=c("date", "Year", "DOY", "Hour"), all.x=TRUE)
+
+
+
+df5 <- merge(df1, df2, by=c("Year", "DOY", "Hour"), all.x=TRUE)
+df6 <- merge(df3, df4, by=c("Year", "DOY", "Hour"), all.x=TRUE)
+
+df7 <- merge(df5, df6, by=c("Year", "DOY", "Hour"), all.x=TRUE)
+
 View(df7)
 
+
+
+
+
 MultVariables_Bart <- df7
-write.table(MultVariables_Bart,file="MultVariables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,row.names = FALSE,na="NA")
+write.table(MultVariables_Bart,file="Variables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,row.names = FALSE,na="NA")
 
-
+View(Variables_Bart)
 
 
 df8 <- LAI_Bart_DOY
@@ -55,14 +65,18 @@ head(LAI_NDVI_Bart)
 LAI_NDVI_Bart <- df10
 write.table(LAI_NDVI_Bart,file="LAI_NDVI_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
 
+#turn data that doesnt pass quality control into NAs
+data[data == -9999] <- NA
+
+
+
+
 #Run Model
 #Variables here: MultVariables_Bart
 #average DOY things herE: LAI_NDVI_Bart
 
 View(MultVariables_Bart) #Incoming radiation, precipitation, temperature, humidity, wind speed
 head(LAI_NDVI_Bart) #LAI and NDVI Averages
-
-
 
 
 
