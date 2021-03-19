@@ -30,20 +30,11 @@ df3 <- Temp_Hum_Bart
 df4 <- WS_Bart
 View(df5)
 
-
-
-
-
 df5 <- merge(df1, df2, by=c("Year", "DOY", "Hour"), all.x=TRUE)
 df6 <- merge(df3, df4, by=c("Year", "DOY", "Hour"), all.x=TRUE)
 
 df7 <- merge(df5, df6, by=c("Year", "DOY", "Hour"), all.x=TRUE)
-
 View(df7)
-
-
-
-
 
 MultVariables_Bart <- df7
 write.table(MultVariables_Bart,file="Variables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,row.names = FALSE,na="NA")
@@ -73,12 +64,19 @@ Variables_Bart1 <- Variables_Bart
 View(Variables_Bart1)
 ####
 
+#MultiVariable[MultiVariable$QC==1,yyy] <- 
+install.packages("dplyr")
+install.packages("tidyverse")
+library(tidyverse)
+library(dplyr)
 
+#Variables_Bart1 %>% 
+#  mutate(RHFinalQF == 1, RHMean = NA)
+#View(Variables_Bart1)
 
-
-#MultiVariable[MultiVariable$QC==1,yyy] <- NA
-Variables_Bart1[Variables_Bart1$RHFinalQF==1, Variables_Bart1$RHMean] <- NA
-
+### these dont work****
+#?mutate_cond
+#Variables_Bart1[which(Variables_Bart1$RHFinalQF=="1"), Variables_Bart1$RHMean] <- NA
 Variables_Bart1[Variables_Bart1$inSWFinalQF==1, Variables_Bart1$inSWmean] <- NA
 Variables_Bart1[Variables_Bart1$inLWFinalQF==1, Variables_Bart1$inLWFinalQF] <- NA
 Variables_Bart1[Variables_Bart1$secPrecipRangeQF==1, Variables_Bart1$secPrecipRangeQF] <- NA
