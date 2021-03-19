@@ -33,9 +33,9 @@ View(df7)
 
 MultVariables_Bart <- df7
 
-write.csv(MultVariables_Bart,file = "C:/Users/Karmic Dreamwork.000/Desktop",row.names=FALSE)
+write.table(MultVariables_Bart, file = "C:/Users/Karmic Dreamwork.000/Desktop",row.names=FALSE)
 
-write.csv(MultVariables_Bart,file = "C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/",row.names=FALSE)
+write.table(MultVariables_Bart,file = "C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/",row.names=FALSE)
 
 
 df8 <- LAI_Bart_DOY
