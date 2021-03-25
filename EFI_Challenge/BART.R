@@ -123,8 +123,84 @@ View(LAI_NDVI_Bart)
 #Bart_Variables
 
 
+#Sierra's Code
+### DATA PARTITIONING
+
+# 2-month chunks of data:
+# 60 days * 48 30-min periods/day = 2880 observations
+# 71545 total observations / 2880 = 24.8420138 => 24
+# 80% TRAIN = 19; 20% TEST = 5
+
+# add column for 24 groups w/ 2880 observations each
+#merged_BART <- merged_BART[order(merged_BART$key),]
+#write.csv(merged_BART,file = "~/Documents/2020-(IU)/SPEA-E579 (Envi Sci Readings)/BART/BART_merged.csv",row.names=FALSE)
+#split_BART <- read.csv("BART_merged.csv")
+#library(Hmisc)
+#split_BART$groups<-as.numeric(cut2(1:nrow(split_BART), m=2880)) # split into 24 groups
+# random number generator to select 5 groups randomly for testing set
+# Randomly selected for TEST: 11, 14, 15, 23, 9
+
+# rename as TRAIN and TEST
+#split_BART$groups[which(split_BART$groups == 11)] <- "TEST" 
+#split_BART$groups[which(split_BART$groups == 14)] <- "TEST" 
+#split_BART$groups[which(split_BART$groups == 15)] <- "TEST" 
+#split_BART$groups[which(split_BART$groups == 23)] <- "TEST" 
+#split_BART$groups[which(split_BART$groups == 9)] <- "TEST" 
+#split_BART$groups[which(split_BART$groups != "TEST")] <- "TRAIN" 
+
+#write.csv(split_BART,file = "~/Documents/2020-(IU)/SPEA-E579 (Envi Sci Readings)/BART/BART_partitioned.csv",row.names=FALSE)
 
 
+BART_partitioned <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/Partitioned data/BART_partitioned.csv")
+View(BART_partitioned)
+
+
+
+#random forest model code
+#install.packages("randomForest")
+#install.packages("ggRandomForests")
+#install.packages("gridExtra")
+library("randomForest")
+library ("ggplot2")
+library("ggRandomForests")
+library("gridExtra")
+
+#random forest model (y is the thing you want to predict)
+#?randomForest
+#data to use: BART_partitioned
+head(BART_partitioned)
+
+#ERROR HERE#
+
+
+#important variables for calculating NEE are: temperature, atmospheric pressure, ...
+#important variables for Latent heat flux (LE) are evaporation and energy, so precipitation, Rn, Ws
+rf1 <- randomForest(le~secPrecipBulk+inSWMean+tempRHMean+inLWMean+windSpeedMean, data=BART_partitioned, mtry=2, ntree=500, importance=TRUE)
+#how does relative humidity, ws, temp
+
+
+
+#importance(rf1,type=2)
+varImpPlot(rf1,type=2)
+importanceOrder=order(rf1$importance)
+names=rownames(rf1$importance)[importanceOrder][1:12]
+
+
+aa <-plot(gg_vimp(rf1))+
+  labs(x="",y="Variable Importance")+
+  ggtitle("Ranking Variables by Importance")
+aa
+
+
+
+#predict function of NEE or other variable
+rfsrc_NEE_test <- predict(rf1, newdata = MMF1 ,na.action = "na.impute",importance = TRUE)
+
+#Should help in predicting R^2
+#Save Dataframe
+write.csv(rfsrc_NEE_test,file = "D:/Research/R_Files/Morgan_Monroe_Flux_Tower/WenzhesFile/rfsrc_NEE_test.csv",row.names = FALSE)
+
+write.csv(MMF1,file = "D:/Research/R_Files/Morgan_Monroe_Flux_Tower/WenzhesFile/MMF1.csv",row.names = FALSE)
 
 
 
