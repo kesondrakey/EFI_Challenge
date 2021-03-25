@@ -1,34 +1,83 @@
-setwd("C:\Users\keyke\OneDrive - Indiana University\Forecast challenge data\BART\CLEANED")
+setwd("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/")
 
-install.packages("caret")
-?caret
+#import data C:\Users\keyke\OneDrive - Indiana University\Forecast challenge data\BART\CLEANED
+Inc_Rn_Bart <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.incoming_rad.30m.csv")
+Precip_Bart <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.precip.30m.csv")
+Temp_Hum_Bart <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.RH.air_temp.30m.csv")
+WS_Bart <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/WS.30m.bart.csv")
+LAI_Bart_DOY <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.LAI.DOY.csv")
+NDVI_Bart_DOY <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.NDVI.DOY.csv")
 
+#adding month and day columns too
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+#Radiation
+#adding in month and day columns
+Inc_Rn_Bart1 <- Inc_Rn_Bart %>%
+  mutate(startDateTime = ymd_hms(startDateTime), 
+         Day = day(startDateTime),
+         Month = month(startDateTime))
 
-#import data 
-Inc_Rn_Bart <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.incoming_rad.30m.csv")
-LAI_Bart_DOY <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.LAI.DOY.csv")
-NDVI_Bart_DOY <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.NDVI.DOY.csv")
-Precip_Bart <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.precip.30m.csv")
-Temp_Hum_Bart <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/BART.RH.air_temp.30m.csv")
-WS_Bart <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/WS.30m.bart.csv")
+#Sierra's code 
+Inc_Rn_Bart1$inSWMean[which(Inc_Rn_Bart1$inSWFinalQF == 1)] <- NA # NA where QF = 1 data
+Inc_Rn_Bart1$inLWMean[which(Inc_Rn_Bart1$inLWFinalQF == 1)] <- NA 
+
+library(tidyr)
+View(radiation_BART_key)
+radiation_BART_key <- Inc_Rn_Bart1 %>% unite("key", c(Year,DOY, Hour), sep = "_", remove = F) # add key
+radiation_BART_key <- radiation_BART_key[ -c(4,6) ] # remove QF columns
+radiation_BART_key <- radiation_BART_key[!is.na(radiation_BART_key$inSWMean) 
+                                         & !is.na(radiation_BART_key$inLWMean),] #remove na columns
+#Precipitation
+Precip_Bart1 <- Precip_Bart %>%
+  mutate(date = ymd(date), 
+         Day = day(date),
+         Month = month(date))
+
+Precip_Bart1$secPrecipBulk[which(Precip_Bart1$secPrecipRangeQF == 1)] <- NA
+precip_BART_key <- Precip_Bart1 %>% unite("key", c(Year,DOY, Hour), sep = "_", remove = F)
+precip_BART_key <- precip_BART_key[ -c(7) ]
+
+#Temperature and Humidity
+Temp_Hum_Bart1 <- Temp_Hum_Bart %>%
+  mutate(date = ymd(date), 
+         Day = day(date),
+         Month = month(date))
+
+Temp_Hum_Bart1$tempRHMean[which(Temp_Hum_Bart1$tempRHFinalQF == 1)] <- NA
+Temp_Hum_Bart1$RHMean[which(Temp_Hum_Bart1$RHFinalQF == 1)] <- NA
+airtemp_RH_BART_key <- Temp_Hum_Bart1 %>% unite("key", c(Year,DOY, Hour), sep = "_", remove = F)
+airtemp_RH_BART_key <- airtemp_RH_BART_key[ -c(7,9) ]
+airtemp_RH_BART_key <- airtemp_RH_BART_key[!is.na(airtemp_RH_BART_key$RHMean) 
+                                           & !is.na(airtemp_RH_BART_key$tempRHMean),]
+View(airtemp_RH_BART_key)
+
+#Wind Speed
+WS_Bart1 <- WS_Bart %>%
+  mutate(startDateTime = ymd_hms(startDateTime), 
+         Day = day(startDateTime),
+         Month = month(startDateTime))
+
+WS_Bart1$windSpeedMean[which(WS_Bart1$windDirFinalQF == 1)] <- NA
+windspeed_BART_key <- WS_Bart1 %>% unite("key", c(Year,DOY, Hour), sep = "_", remove = F)
+windspeed_BART_key <- windspeed_BART_key[ -c(4) ]
+windspeed_BART_key <- windspeed_BART_key[!is.na(windspeed_BART_key$windSpeedMean),]
 
 
 ###Merge dataframes with similar setup
-head(Inc_Rn_Bart) #date, year, Doy, hour
-head(Precip_Bart) #data, year, doy, hour
-head(Temp_Hum_Bart) #date, year, doy, hour
-head(WS_Bart) #date, year, doy, hour
+head(Inc_Rn_Bart1) #date, year, Doy, hour, day, month
+head(precip_BART_key) #data, year, doy, hour, day, month
+head(airtemp_RH_BART_key) #date, year, doy, hour, day, month
+head(WS_Bart1) #date, year, doy, hour, day, month
 
 head(LAI_Bart_DOY) #doy
 head(NDVI_Bart_DOY)#doy
 
-head(WS_Bart)
-
-df1 <- Inc_Rn_Bart
-df2 <- Precip_Bart
-df3 <- Temp_Hum_Bart
-df4 <- WS_Bart
-View(df5)
+df1 <- radiation_BART_key
+df2 <- precip_BART_key
+df3 <- airtemp_RH_BART_key
+df4 <- windspeed_BART_key
 
 df5 <- merge(df1, df2, by=c("Year", "DOY", "Hour"), all.x=TRUE)
 df6 <- merge(df3, df4, by=c("Year", "DOY", "Hour"), all.x=TRUE)
@@ -36,10 +85,20 @@ df6 <- merge(df3, df4, by=c("Year", "DOY", "Hour"), all.x=TRUE)
 df7 <- merge(df5, df6, by=c("Year", "DOY", "Hour"), all.x=TRUE)
 View(df7)
 
-MultVariables_Bart <- df7
-write.table(MultVariables_Bart,file="Variables_Bart.csv",sep=" ",quote=FALSE,append=FALSE,row.names = FALSE,na="NA")
+test <- df7
+#deleting excessive date columns
+test1 <- test[ -c(12, 13, 15, 16) ]
+test2 <- test1[ -c(13, 14, 17:20, 22:25)]
+View(test2)
 
-View(Variables_Bart)
+
+MultVariables_Bart <- test2
+head(MultVariables_Bart)
+
+write.csv(MultVariables_Bart, file = "C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/Bart_Variables.csv",row.names = FALSE)
+Bart_Variables <- read.csv("C:/Users/keyke/OneDrive - Indiana University/Forecast challenge data/BART/CLEANED/Bart_Variables.csv")
+View(Bart_Variables)
+
 
 
 df8 <- LAI_Bart_DOY
@@ -51,48 +110,33 @@ names(df9)[names(df9) == "mean"] <- "NDVI_mean"
 head(df9)
 
 df10 <- merge(df8, df9, by=c("DOY"), all.x=TRUE)
-head(LAI_NDVI_Bart)
+head(df10)
 
 LAI_NDVI_Bart <- df10
 write.table(LAI_NDVI_Bart,file="LAI_NDVI_Bart.csv",sep=" ",quote=FALSE,append=FALSE,na="NA")
-Variables_Bart <- read.csv("~/GitHub/EFI_Challenge/EFI_Challenge/Variables_Bart.csv", sep="")
 
-#turn data that doesnt pass quality control into NAs; remove data when QF = 1 
-head(Variables_Bart)
+LAI_NDVI_Bart <- read.csv("C:/R_Files/EFI_Challenge/LAI_NDVI_Bart.csv", sep="")
+View(LAI_NDVI_Bart)
 
-Variables_Bart1 <- Variables_Bart
-View(Variables_Bart1)
-####
-
-#MultiVariable[MultiVariable$QC==1,yyy] <- 
-install.packages("dplyr")
-install.packages("tidyverse")
-library(tidyverse)
-library(dplyr)
-
-#Variables_Bart1 %>% 
-#  mutate(RHFinalQF == 1, RHMean = NA)
-#View(Variables_Bart1)
-
-### these dont work****
-#?mutate_cond
-#Variables_Bart1[which(Variables_Bart1$RHFinalQF=="1"), Variables_Bart1$RHMean] <- NA
-#Variables_Bart1[Variables_Bart1$inSWFinalQF==1, Variables_Bart1$inSWmean] <- NA
-#Variables_Bart1[Variables_Bart1$inLWFinalQF==1, Variables_Bart1$inLWFinalQF] <- NA
-#Variables_Bart1[Variables_Bart1$secPrecipRangeQF==1, Variables_Bart1$secPrecipRangeQF] <- NA
-#Variables_Bart1[Variables_Bart1$RHFinalQF==1,] <- NA
-#Variables_Bart1[Variables_Bart1$tempRHFinalQF==1,] <- NA
-#Variables_Bart1[Variables_Bart1$windDirFinalQF==1,] <- NA
-
-#View(Variables_Bart1)
-
-#create new dataframe
-#head(Variables_Bart)
-#CleanedVariables_Bart <- data.frame(StartTime = Variables_Bart$startDateTime.x, EndTime = Variables_Bart$endDateTime.x, Year = Variables_Bart$Year, DOY = Variables_Bart$DOY, Hour = Variables_Bart$Hour, inSWMean = Variables_Bart$inSWMean, inLWMean = Variables_Bart$inLWMean, secPrecipBulk = Variables_Bart$secPrecipBulk, RHMean = Variables_Bart$RHMean, tempRHMean = Variables_Bart$tempRHMean, windSpeedMean = Variables_Bart$windSpeedMean)
+#Data with clean dates and quality controlled are:
+#LAI_NDVI_Bart
+#Bart_Variables
 
 
-#excel cleaned variables (where quality control failed)
-Bart_multiple_Wenzhe <- read.csv("C:/Users/Karmic Dreamwork.000/OneDrive - Indiana University/Forecast challenge data/BART/Combined_Variables/Bart_multiple_Wenzhe.csv")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Run Model
 #Variables here: MultVariables_Bart
